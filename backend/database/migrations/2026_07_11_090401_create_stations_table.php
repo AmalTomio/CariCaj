@@ -1,0 +1,57 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+       Schema::create('stations', function (Blueprint $table) {
+    $table->id();
+
+    $table->string('name');
+
+    $table->string('operator');
+
+    $table->string('address');
+
+    $table->string('city');
+
+    $table->string('state');
+
+    $table->string('postcode');
+
+    $table->decimal('latitude', 10, 7);
+
+    $table->decimal('longitude', 10, 7);
+
+    $table->string('opening_hours')->nullable();
+
+    $table->boolean('is_public')->default(true);
+
+    $table->boolean('is_active')->default(true);
+
+    $table->timestamps();
+
+    $table->softDeletes();
+
+    $table->index(['latitude', 'longitude']);
+    $table->index('operator');
+    $table->index('city');
+    $table->index('state');
+});
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('stations');
+    }
+};
