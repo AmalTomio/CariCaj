@@ -1,13 +1,17 @@
-export const API_ENDPOINTS = {
-  stations: "/stations",
+export const ENDPOINTS = {
+  stations: {
+    nearby: "/stations/nearby",
+    details: (id) => `/stations/${id}`,
+  },
 
-  nearby: "/stations/nearby",
+  community: {
+    feed: "/community",
+    report: "/community/report",
+  },
 
-  station: (id) => `/stations/${id}`,
-
-  search: "/stations/search",
-
-  reports: "/reports",
-
-  community: "/community",
+  auth: {
+    google: "/auth/google",
+    apple: "/auth/apple",
+    logout: "/auth/logout",
+  },
 };

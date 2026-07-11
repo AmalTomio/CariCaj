@@ -1,12 +1,21 @@
 "use client";
 
-import { ThemeProvider } from "./ThemeProvider";
-import { QueryProvider } from "./QueryProvider";
+import QueryProvider from "./QueryProvider";
+import ThemeProvider from "./ThemeProvider";
+import { Toaster } from "sonner";
 
-export function AppProvider({ children }) {
+export default function AppProvider({ children }) {
   return (
     <ThemeProvider>
-      <QueryProvider>{children}</QueryProvider>
+      <QueryProvider>
+        {children}
+
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+        />
+      </QueryProvider>
     </ThemeProvider>
   );
 }

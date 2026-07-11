@@ -1,10 +1,13 @@
-import { api } from "@/infrastructure/api/client";
-import { API_ENDPOINTS } from "@/infrastructure/api/endpoints";
+import api from "@/infrastructure/api/client";
+import ENDPOINTS from "@/infrastructure/api/endpoints";
 
-export const StationRepository = {
-  async getAll() {
-    const { data } = await api.get(API_ENDPOINTS.stations);
+export async function getNearbyStations(params) {
+  const { data } = await api.get(
+    ENDPOINTS.STATIONS.NEARBY,
+    {
+      params,
+    }
+  );
 
-    return data;
-  },
-};
+  return data;
+}

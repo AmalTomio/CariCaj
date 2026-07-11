@@ -1,15 +1,31 @@
 import axios from "axios";
 import { APP_CONFIG } from "@/config/app";
 
-export const api = axios.create({
-    baseURL: APP_CONFIG.apiUrl,
-
-    timeout: 10000,
-
-    withCredentials: true,
-
-    headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-    },
+const client = axios.create({
+  baseURL: APP_CONFIG.api.baseUrl,
+  timeout: APP_CONFIG.api.timeout,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
 });
+
+client.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized request.");
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export default client;
