@@ -1,13 +1,15 @@
 import api from "@/infrastructure/api/client";
-import ENDPOINTS from "@/infrastructure/api/endpoints";
+import { ENDPOINTS } from "@/infrastructure/api/endpoints";
 
-export async function getNearbyStations(params) {
-  const { data } = await api.get(
-    ENDPOINTS.STATIONS.NEARBY,
-    {
-      params,
-    }
-  );
+export async function getStations(params = {}) {
+  const endpoint =
+    params.lat && params.lng
+      ? ENDPOINTS.stations.nearby
+      : ENDPOINTS.stations.list;
 
-  return data;
+  const response = await api.get(endpoint, {
+    params,
+  });
+
+  return response.data.data;
 }

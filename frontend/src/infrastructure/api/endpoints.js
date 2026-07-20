@@ -1,5 +1,6 @@
 export const ENDPOINTS = {
   stations: {
+    list: "/stations",
     nearby: "/stations/nearby",
     details: (id) => `/stations/${id}`,
   },

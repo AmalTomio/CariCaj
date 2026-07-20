@@ -17,13 +17,10 @@ export default function StationCard({
   if (loading) {
     return (
       <Card className="rounded-2xl">
-        <CardContent className="space-y-4 p-5 animate-pulse">
+        <CardContent className="space-y-4 animate-pulse p-5">
           <div className="h-5 w-48 rounded bg-muted" />
-
           <div className="h-4 w-32 rounded bg-muted" />
-
           <div className="h-4 w-full rounded bg-muted" />
-
           <div className="flex gap-2">
             <div className="h-7 w-20 rounded bg-muted" />
             <div className="h-7 w-20 rounded bg-muted" />
@@ -33,6 +30,19 @@ export default function StationCard({
     );
   }
 
+  const navigate = () => {
+    window.open(
+      `https://www.google.com/maps/search/?api=1&query=${station.latitude},${station.longitude}`,
+      "_blank"
+    );
+  };
+
+  const statusColor = {
+    active: "bg-green-500",
+    maintenance: "bg-yellow-500",
+    inactive: "bg-red-500",
+  };
+
   return (
     <Card
       onClick={onClick}
@@ -40,8 +50,8 @@ export default function StationCard({
         cursor-pointer
         rounded-2xl
         transition-all
-        hover:shadow-lg
         hover:border-emerald-500
+        hover:shadow-lg
       "
     >
       <CardContent className="space-y-4 p-5">
@@ -52,30 +62,37 @@ export default function StationCard({
             </h3>
 
             <p className="text-sm text-muted-foreground">
-              {station.operator}
+              {station.operator?.name ?? "Unknown Operator"}
             </p>
           </div>
 
-          <Badge>
-            {station.status}
+          <Badge className={statusColor[station.status]}>
+            {station.status.charAt(0).toUpperCase() +
+              station.status.slice(1)}
           </Badge>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPinned className="h-4 w-4" />
 
-          {station.distance} km
+          {station.distance != null
+            ? `${station.distance} km away`
+            : `${station.city}, ${station.state}`}
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Zap className="h-4 w-4 text-emerald-500" />
 
-          {station.availableConnectors} /
-          {station.totalConnectors}
-          {" "}Available
+          {station.total_connectors > 0
+            ? `${station.available_connectors} / ${station.total_connectors} Available`
+            : "No connector information"}
         </div>
 
         <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate();
+          }}
           className="
             flex
             w-full
@@ -91,7 +108,6 @@ export default function StationCard({
           "
         >
           <Navigation className="h-4 w-4" />
-
           Navigate
         </button>
       </CardContent>

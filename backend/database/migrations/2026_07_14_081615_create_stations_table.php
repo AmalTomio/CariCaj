@@ -16,9 +16,12 @@ return new class extends Migration
 
     $table->string('name');
 
-    $table->string('operator');
+$table->foreignId('operator_id')
+      ->constrained()
+      ->cascadeOnUpdate()
+      ->restrictOnDelete();
 
-    $table->string('address');
+    $table->text('address');
 
     $table->string('city');
 
@@ -30,18 +33,23 @@ return new class extends Migration
 
     $table->decimal('longitude', 10, 7);
 
-    $table->string('opening_hours')->nullable();
+    $table->json('opening_hours')->nullable();
+
+    $table->text('description')->nullable();
 
     $table->boolean('is_public')->default(true);
 
-    $table->boolean('is_active')->default(true);
+    $table->enum('status', [
+        'active',
+        'maintenance',
+        'inactive'
+    ])->default('active');
 
     $table->timestamps();
 
     $table->softDeletes();
 
     $table->index(['latitude', 'longitude']);
-    $table->index('operator');
     $table->index('city');
     $table->index('state');
 });
