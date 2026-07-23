@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
+import { useNearbyStations } from "@/features/station/hooks/useNearbyStations";
 import StationCard from "@/features/station/components/StationCard";
-import { useStations } from "@/features/station/hooks/useStations";
+// import { useStations } from "@/features/station/hooks/useStations";
 
 import { getCurrentPosition } from "@/infrastructure/geolocation/browserLocation";
 
@@ -16,14 +16,20 @@ export default function NearbyStationsSection() {
   const [location, setLocation] = useState(null);
   const [locating, setLocating] = useState(false);
 
-  const {
-    data: stations = [],
-    isLoading,
-    isError,
-  } = useStations({
-    ...(location ?? {}),
-    radius: 25,
-  });
+ const {
+  data: stations = [],
+  isLoading,
+  isError,
+} = useNearbyStations(
+  location
+    ? {
+        lat: location.lat,
+        lng: location.lng,
+        radius: 25,
+        limit: 5,
+      }
+    : {}
+);
 
   async function enableLocation() {
     try {

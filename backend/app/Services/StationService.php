@@ -24,12 +24,14 @@ class StationService
     public function nearby(
         float $latitude,
         float $longitude,
-        float $radius
+        float $radius = 25,
+        ?int $limit = null
     ) {
         return $this->stationRepository->nearby(
             $latitude,
             $longitude,
-            $radius
+            $radius,
+            $limit
         );
     }
 

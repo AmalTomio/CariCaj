@@ -30,7 +30,8 @@ class StationRepository implements StationRepositoryInterface
     public function nearby(
     float $latitude,
     float $longitude,
-    float $radius
+    float $radius,
+    ?int $limit = null
 ) {
     return Station::query()
         ->with([
@@ -61,6 +62,10 @@ class StationRepository implements StationRepositoryInterface
         ])
         ->having('distance', '<=', $radius)
         ->orderBy('distance')
+        ->when(
+            $limit,
+            fn ($query) => $query->limit($limit)
+        )
         ->get();
 }
 

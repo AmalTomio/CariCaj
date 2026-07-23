@@ -9,7 +9,7 @@ class ImportStations extends Command
 {
     protected $signature = 'stations:import';
 
-    protected $description = 'Import EV charging stations from OpenStreetMap';
+    protected $description = 'Import EV charging stations from OpenChargeMap';
 
     public function __construct(
         protected StationSyncService $syncService

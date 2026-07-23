@@ -2,101 +2,35 @@
 
 namespace App\Services\Import;
 
-use App\Models\Operator;
-use App\Models\Station;
+
 use App\Providers\Station\Contracts\StationProviderInterface;
-use Illuminate\Support\Str;
+use App\Services\Import\Synchronizers\OperatorSynchronizer;
+use App\Services\Import\Synchronizers\StationSynchronizer;
 
 class StationSyncService
 {
     public function __construct(
-        protected StationProviderInterface $provider
-    ) {
-    }
+        protected StationProviderInterface $provider,
+        protected OperatorSynchronizer $operatorSynchronizer,
+        protected StationSynchronizer $stationSynchronizer,
+    ) {}
 
     public function sync(): array
     {
-        $elements = $this->provider->fetch();
+        $stations = $this->provider->fetch();
 
         $created = 0;
         $updated = 0;
 
-        foreach ($elements as $element) {
+        foreach ($stations as $stationData) {
 
-            $tags = $element['tags'] ?? [];
-
-            $latitude = $element['lat']
-                ?? data_get($element, 'center.lat');
-
-            $longitude = $element['lon']
-                ?? data_get($element, 'center.lon');
-
-            if (!$latitude || !$longitude) {
-                continue;
-            }
-
-            $operatorName = trim($tags['operator'] ?? 'Unknown Operator');
-
-            $operator = Operator::firstOrCreate(
-                [
-                    'slug' => Str::slug($operatorName),
-                ],
-                [
-                    'name' => $operatorName,
-                    'is_active' => true,
-                ]
+            $operator = $this->operatorSynchronizer->sync(
+                $stationData->operator
             );
 
-            $stationData = [
-                'operator_id' => $operator->id,
-
-                'name' => $tags['name']
-                    ?? 'Unnamed Charging Station',
-
-                // Prevent NOT NULL database errors
-                'address' => $tags['addr:street']
-                    ?? $tags['addr:full']
-                    ?? 'Unknown Address',
-
-                'city' => $tags['addr:city']
-                    ?? $tags['addr:district']
-                    ?? 'Unknown',
-
-                'state' => $tags['addr:state']
-                    ?? 'Unknown',
-
-                'postcode' => $tags['addr:postcode']
-                    ?? '00000',
-
-                'latitude' => $latitude,
-
-                'longitude' => $longitude,
-
-                'opening_hours' => isset($tags['opening_hours'])
-                    ? [
-                        'raw' => $tags['opening_hours']
-                    ]
-                    : null,
-
-                'description' => $tags['description']
-                    ?? null,
-
-                'is_public' => true,
-
-                'status' => 'active',
-
-                'source' => 'openchargemap',
-
-                'verified' => false,
-
-                'last_synced_at' => now(),
-            ];
-
-            $station = Station::updateOrCreate(
-                [
-                    'external_id' => $element['id'],
-                ],
-                $stationData
+            $station = $this->stationSynchronizer->sync(
+                $stationData,
+                $operator
             );
 
             if ($station->wasRecentlyCreated) {

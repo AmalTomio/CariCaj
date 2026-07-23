@@ -2,12 +2,12 @@
 
 namespace App\Providers\Station\Contracts;
 
+use App\Data\Station\StationData;
+
 interface StationProviderInterface
 {
     /**
-     * Fetch stations from external provider.
-     *
-     * @return array
+     * @return StationData[]
      */
     public function fetch(): array;
 }

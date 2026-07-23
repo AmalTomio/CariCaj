@@ -1,80 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Station;
 
+use App\Integrations\OpenChargeMap\OpenChargeMapClient;
+use App\Integrations\OpenChargeMap\OpenChargeMapTransformer;
 use App\Providers\Station\Contracts\StationProviderInterface;
-use Illuminate\Support\Facades\Http;
 
 class OpenChargeMapProvider implements StationProviderInterface
 {
+    public function __construct(
+        protected OpenChargeMapClient $client,
+        protected OpenChargeMapTransformer $transformer,
+    ) {
+    }
+
     public function fetch(): array
     {
-        $response = Http::acceptJson()
-    ->timeout(60)
-    ->withHeaders([
-        'User-Agent' => 'CariCaj/1.0',
-        'X-API-Key' => config('services.openchargemap.api_key'),
-    ])
-    ->get(config('services.openchargemap.base_url') . '/poi', [
-        'output' => 'json',
-'countrycode' => config('services.openchargemap.country'),
-        'maxresults' => 50,
-        'compact' => true,
-        'verbose' => false,
-    ]);
-
-        $response->throw();
-
-        $stations = [];
-
-        foreach ($response->json() as $station) {
-
-            $address = $station['AddressInfo'] ?? [];
-
-            $stations[] = [
-
-                // Keep the same structure expected by StationSyncService
-                'id' => $station['ID'],
-
-                'lat' => $address['Latitude'] ?? null,
-
-                'lon' => $address['Longitude'] ?? null,
-
-                'tags' => [
-
-                    'name' => $address['Title']
-                        ?? 'Unnamed Charging Station',
-
-                    'operator' =>
-                        $station['OperatorInfo']['Title']
-                        ?? 'Unknown Operator',
-
-                    'addr:street' =>
-                        $address['AddressLine1']
-                        ?? 'Unknown Address',
-
-                    'addr:city' =>
-                        $address['Town']
-                        ?? 'Unknown',
-
-                    'addr:state' =>
-                        $address['StateOrProvince']
-                        ?? 'Unknown',
-
-                    'addr:postcode' =>
-                        $address['Postcode']
-                        ?? '00000',
-
-                    'description' =>
-                        $address['AccessComments']
-                        ?? null,
-
-                    'opening_hours' =>
-                        null,
-                ],
-            ];
-        }
-
-        return $stations;
+        return $this->transformer->transform(
+            $this->client->fetchStations()
+        );
     }
 }

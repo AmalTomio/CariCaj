@@ -6,13 +6,14 @@ interface StationRepositoryInterface
 {
     public function all();
 
+    public function find(int $id);
+
     public function nearby(
         float $latitude,
         float $longitude,
-        float $radius
+        float $radius,
+        ?int $limit = null
     );
-
-    public function find(int $id);
 
     public function search(array $filters);
 }
