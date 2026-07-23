@@ -85,7 +85,7 @@ class StationSyncService
 
                 'status' => 'active',
 
-                'source' => 'osm',
+                'source' => 'openchargemap',
 
                 'verified' => false,
 
@@ -94,7 +94,7 @@ class StationSyncService
 
             $station = Station::updateOrCreate(
                 [
-                    'osm_id' => $element['id'],
+                    'external_id' => $element['id'],
                 ],
                 $stationData
             );

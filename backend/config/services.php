@@ -13,6 +13,11 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
+    
+    'openchargemap' => [
+    'base_url' => env('OPENCHARGEMAP_BASE_URL', 'https://api.openchargemap.io/v3'),
+    'api_key' => env('OPENCHARGEMAP_API_KEY'),
+],
 
     'mailgun' => [
         'domain' => env('MAILGUN_DOMAIN'),

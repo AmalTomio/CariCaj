@@ -7,7 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\StationRepositoryInterface;
 use App\Repositories\Eloquent\StationRepository;
 use App\Providers\Station\Contracts\StationProviderInterface;
-use App\Providers\Station\OpenStreetMapProvider;
+use App\Providers\Station\OpenChargeMapProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,9 +19,9 @@ class AppServiceProvider extends ServiceProvider
     );
 
     $this->app->bind(
-        StationProviderInterface::class,
-        OpenStreetMapProvider::class
-    );
+    StationProviderInterface::class,
+    OpenChargeMapProvider::class
+);
     }
 
     public function boot(): void

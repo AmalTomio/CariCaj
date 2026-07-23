@@ -11,7 +11,7 @@ class Station extends Model
     use HasFactory, SoftDeletes;
 
    protected $fillable = [
-    'osm_id',
+    'external_id',
     'operator_id',
 
     'name',

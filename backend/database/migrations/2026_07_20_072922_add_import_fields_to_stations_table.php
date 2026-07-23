@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('stations', function (Blueprint $table) {
 
-            $table->unsignedBigInteger('osm_id')
+            $table->unsignedBigInteger('external_id')
                 ->nullable()
                 ->unique()
                 ->after('id');
@@ -36,7 +36,7 @@ return new class extends Migration
         Schema::table('stations', function (Blueprint $table) {
 
             $table->dropColumn([
-                'osm_id',
+                'external_id',
                 'source',
                 'verified',
                 'last_synced_at',
